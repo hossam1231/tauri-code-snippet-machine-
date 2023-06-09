@@ -6,11 +6,17 @@ import { open } from "@tauri-apps/api/dialog";
 import { appDir } from "@tauri-apps/api/path";
 // Open a selection dialog for directories
 import { readDir, BaseDirectory } from "@tauri-apps/api/fs";
+import AppLayout from "./App.layout";
+import path from "path";
 
 function App() {
   const [folderDir, setFolderDir] = useState("");
   const [greetMsg, setGreetMsg] = useState("");
   const [name, setName] = useState("");
+  const [entries, setEntries] = useState();
+
+  var folderOrder = folderDir.split("/");
+  console.log(folderOrder);
 
   async function readFolder(path) {
     if (!path) return;
@@ -46,21 +52,46 @@ function App() {
   }
 
   return (
-    <div className="container">
-      <h1>Code Co-Pilot</h1>
-      <p>Chose a folder to get started</p>
-
-      <form
+    <AppLayout
+      overView={{
+        appPath: (
+          <div className="flex flex-col items-start justify-between gap-x-8 gap-y-4 bg-gray-700/10 px-4 py-4 sm:flex-row sm:items-center sm:px-6 lg:px-8">
+            <div>
+              <div className="flex items-center gap-x-3">
+                <div className="flex-none rounded-full bg-green-400/10 p-1 text-green-400">
+                  <div className="h-2 w-2 rounded-full bg-current" />
+                </div>
+                <h1 className="flex gap-x-3 text-base leading-7">
+                  <span className="font-semibold text-white">
+                    {[...folderOrder].pop() || "Select a folder to get started"}
+                  </span>
+                  {/* <span className="text-gray-600">/</span>
+              <span className="font-semibold text-white">{}</span> */}
+                </h1>
+              </div>
+              <p className="mt-2 text-xs leading-6 text-gray-400">
+                Your project path {folderDir}
+              </p>
+            </div>
+            <div
+              onClick={() => {
+                openFolder();
+              }}
+              className="order-first flex-none rounded-full bg-blue-400/10 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-400/30 sm:order-none"
+            >
+              Change
+            </div>
+          </div>
+        ),
+      }}
+    >
+      {/* <div
+       
         className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          openFolder();
-        }}
       >
         <PathCard placeholder={folderDir ? folderDir : ""} />
-        <button type="submit">Open</button>
-      </form>
-    </div>
+      </div> */}
+    </AppLayout>
   );
 }
 
